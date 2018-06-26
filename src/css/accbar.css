@@ -1,0 +1,190 @@
+/*Copyright 2017 Humber College
+
+ 
+Permission is hereby granted, free of charge, to any person obtaining a copy of the code for the Accessibility Bar and associated documentation files (â€œSoftwareâ€) for use in the Google Chrome internet browser, to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+
+ 
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.*/
+
+.accpanel{
+    position: fixed;
+    top: 100px;
+    left: 0px;
+    width: 70px;
+    z-index: 1000001;
+    padding: 10px;
+    padding-left: 0px;
+    padding-bottom: 2px;
+    background: rgba(255,255,255,0.8);
+    background-size: inherit;
+    border-top-right-radius: 6px;
+    border-bottom-right-radius: 6px;
+    
+    display: block;;
+}
+
+.accpanel a.button{
+    width: 48px;
+    height: 48px;
+    background-size: contain;
+    background-repeat: no-repeat;
+    display: inline-block;
+
+    margin-left: 10px;
+}
+
+.accpanel a.button:hover{
+    cursor: pointer;
+}
+
+.tts-play{
+    background-image: url(../images/accessibility-default-text-to-speech.png);
+    display: inline-block;
+}
+
+.pdf{
+    background-image: url(../images/accessibility-default-pdf.png);
+    display: inline-block;
+}
+
+.pdf:hover,
+.pdf:focus{
+    background-image: url(../images/accessibility-focus-pdf.png);
+    display: inline-block;
+}
+
+.tts-play:hover,
+.tts-play:focus
+{
+    background-image: url(../images/accessibility-hover-text-to-speech.png);
+    display: inline-block;
+}
+
+.accpanel .button.tts-stop{
+    background-image: url(../images/accessibility-focus-text-to-speech-stop.png);
+    display: none;
+}
+
+.accpanel.tts-status-playing .tts-play{
+    background-image: url(../images/accessibility-focus-text-to-speech-pause.png);
+}
+
+.accpanel.tts-status-playing .tts-stop{
+    display: inline-block;
+}
+
+
+.tts-status-playing.tts-status-pause .tts-play{
+    background-image: url(../images/accessibility-focus-text-to-speech-play.png);
+}
+
+.accpanel .activitied.magnifier,
+.accpanel .activitied.magnifier:hover{
+    background-image:url(../images/accessibility-magnify-hover.png);
+}
+
+.button.rtf{
+    background-image: url(../images/accessibility-default-rtf.png);
+}
+
+.button.rtf:hover,
+.button.rtf:focus{
+    background-image: url(../images/accessibility-focus-rtf.png);
+}
+
+.button.print{
+    background-image: url(../images/accessibility-default-print.png);
+}
+
+.button.print:hover,
+.button.print:focus{
+    background-image: url(../images/accessibility-focus-print.png);
+}
+
+
+.button.magnifier{
+    background-image: url(../images/accessibility-default-magnify.png);
+    position:initial;
+}
+
+.button.magnifier:hover,
+.button.magnifier:focus{
+    background-image: url(../images/accessibility-magnify-hover.png);
+}
+
+.button.magnifier.activated,
+.button.magnifier.activated:hover{
+    background-image: url(../images/accessibility-magnify-quit.png);
+}
+
+.accpanel .hidden{
+    width: 1px;
+    height: 1px;
+}
+
+.magnifier_content{
+    height: 660px;
+    top: 0px;
+    left: 0px;
+    cursor: none;
+    width: 410px;
+    display: none;
+    visibility: visible;
+    position: absolute;
+}
+
+.magnifier_body{
+    top: 0px;
+    left: 0px;
+    width: 560px;
+    height: 560px;
+    background-color: white;
+    border: 3px solid #373737;
+    overflow: hidden;
+    z-index: 1000000;
+    border-radius: 700px;
+    -webkit-border-radius: 700px;
+    position: absolute;
+}
+
+.magnifier_wrapper{
+    top: 0px;
+    left: 0px;
+    overflow: visible;
+    position: absolute;
+    display: block;
+    transform: scale(2);
+    -moz-transform: scale(2);
+    /* -webkit-transform: scale(2); */
+    -ms-transform: scale(2);
+    -o-transform: scale(2);
+    transform-origin: left top;
+    -moz-transform-origin: left top;
+    -ms-transform-origin: left top;
+    -webkit-transform-origin: left top;
+    -o-transform-origin: left top;
+    user-select: none;
+    -moz-user-select: none;
+    -webkit-user-select: none;
+}
+
+.magnifier_wrapper .page-loader{
+    display: none;
+}
+
+
+body[id^="module"]{
+    margin-left: 70px;
+}
+
+
+@media (max-width:819px){
+    .accpanel{
+        display: none;
+    }
+}
+img.ttshighlight{
+        -webkit-box-shadow: 0px 0px 21px 2px rgba(255,0,64,1);
+-moz-box-shadow: 0px 0px 21px 2px rgba(255,0,64,1);
+box-shadow: 0px 0px 21px 2px rgba(255,0,64,1);
+    }
