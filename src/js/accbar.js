@@ -1,12 +1,23 @@
-//Copyright 2017 Humber College
+//Copyright 2020 Humber College
 
-//Permission is hereby granted, free of charge, to any person obtaining a copy of the code for the Accessibility Bar and associated documentation files (â€œSoftwareâ€) for use in the Google Chrome internet browser, to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+//Permission is hereby granted, free of charge, to any person obtaining a copy of the code for the Accessibility Bar and associated documentation files (ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã¢â‚¬Â¦ÃƒÂ¢Ã¢â€šÂ¬Ã…â€œSoftwareÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ ) for use in the Google Chrome internet browser, to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
 
 //The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 
 //THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 var accbarloaded = false;
+
+
+//if (typeof jQuery != 'undefined') {  
+    // jQuery is loaded => print the version
+    //if (jQuery.fn.jquery < "1.11.2")
+        //alert("error: your jquery verison is too low , please visit https://code.jquery.com/ to get the latest version");
+//}
+//else{
+    //alert("error: Accbar could not detect JQuery, please visit https://code.jquery.com/ to get the latest version");
+//}
+
 $(document).ready(function(){
     if (accbarloaded)
         return;
@@ -16,6 +27,8 @@ $(document).ready(function(){
     var altoff = ($("body").data("altoff"));
     if (readtags)
         readtags = readtags.toLowerCase();
+    else
+        readtags = "'p','span','a','h1','h2','h3','h4','h5','ul','li','ol','ul','td','th','blockquote','h6'";
 
     console.log(language);
 
@@ -48,7 +61,14 @@ $(document).ready(function(){
                 if (tag == "nav")
                     console.log("asfd");
               //  console.log(tag+"----"+readtags);
-                if ((!igrontags && ((readtags && readtags.indexOf("'"+tag+"'") != -1) || $(children[i]).hasClass("tts") || $(children[i]).hasClass("notts") || (!altoff&&tag == "img") || (tag == "button"))) ||
+                if (
+                    (!igrontags && 
+                        ((readtags && readtags.indexOf("'"+tag+"'") != -1) || 
+                           
+                            $(children[i]).hasClass("tts") || 
+                            $(children[i]).hasClass("notts") || 
+                            (!altoff&&tag == "img") || 
+                            (tag == "button"))) ||
                     (igrontags && tag =="img" && igrontags == 1)){
               //      if (igrontags == 1 && tag =="img")
                 //        console.log(tag+"-" + $(children[i]).attr("alt"));
@@ -86,7 +106,7 @@ $(document).ready(function(){
             ttssupport= false;
         }
         this.isreading = false;
-        var ispause = false;
+        this.ispause = false;
         var timerhandle = null;
 
        
@@ -165,8 +185,30 @@ $(document).ready(function(){
                     alert("no french lib found");
                 }
             }
+            else if(language == "es"){
+                 speechSynthesis.getVoices().filter(
+                    function(voice) { 
+                        if (voice.lang == "es-ES")
+                            msg.voice = voice;
+                    });
+                if (!msg.voice){
+                    alert("no french lib found");
+                }
+            }
+            else if(language == "cn"){
+                 speechSynthesis.getVoices().filter(
+                    function(voice) { 
+                        if (voice.lang == "zh-CN")
+                            msg.voice = voice;
+                    });
+                if (!msg.voice){
+                    alert("no french lib found");
+                }
+            }
                
-
+            speechSynthesis.getVoices().forEach(function(voice){
+           //     console.log(voice);
+            })
             //}
 
             window.speechSynthesis.speak(msg);
@@ -196,6 +238,7 @@ $(document).ready(function(){
         var multicontent;
         var multicontentindex = 0;
         var contentindex = 0;
+        var contentstatus = {};
         this.playstop = function(){
             $('.panel-collapse').each(function(){
                 if (!$(this).hasClass('in') && !$(this).hasClass('fold')) {
@@ -221,7 +264,7 @@ $(document).ready(function(){
                     timerhandle = setInterval(function(){
 
                         if ((ttscontents.length > contentindex || multicontent.length > multicontentindex)
-                            && !window.speechSynthesis.speaking){
+                            && !window.speechSynthesis.speaking && !ispause){
                             if (!multicontent || multicontent.length <= (multicontentindex)){
                                 $("img").removeClass("ttshighlight");
                                 var contenttext;
@@ -250,11 +293,16 @@ $(document).ready(function(){
                                 contentindex++;
                                 multicontentindex = 0;
                                 multicontent = [];
+                                var isfound = false;
                                 for (var a=0; a < contenttext.length; a++){
                                     if (!multicontent[parseInt(a/maxwords)])
                                         multicontent[parseInt(a/maxwords)] = "";
+                                    if(contenttext[a])
+                                        isfound = true;
                                     multicontent[parseInt(a/maxwords)] += " " + contenttext[a];
                                 }
+
+                                contentstatus[contentindex] = isfound;
                             }
                             speak(multicontent[multicontentindex]);
                             multicontentindex++;
@@ -307,7 +355,13 @@ $(document).ready(function(){
             if (!isreading || !ttssupport)
                 return;
 
-            contentindex--;
+            var i = 0;
+            do{
+                contentindex--;
+                if(contentstatus[contentindex])
+                    i++;
+            }while(contentindex >= 0 && i < 2)
+
 
             if(contentindex < 0)
                 contentindex = 0;
@@ -341,6 +395,8 @@ $(document).ready(function(){
                 return;
             zoom.remove();
             zoom = $("<div class=\"magnifier_content\"><div class=\"magnifier_body\" id=\"magnifier_body\" ><div class=\"magnifier_wrapper \"></div></div></div>");
+            var aaa=$("body").html();
+            aaa =$(aaa);
             zoom.find(".magnifier_wrapper").append($($("body").html()));
             document.body.appendChild(zoom[0]);
             lastscrolltop = $(window).scrollTop();
@@ -428,6 +484,10 @@ $(document).ready(function(){
                 button.css("top",100);
         });
     }
+    else{
+        button.find(".pdf").remove();
+        button.find(".rtf").remove();
+    }
 
 
     
@@ -483,13 +543,15 @@ $(document).ready(function(){
         //setTimeout(function(){
             var selectedText = getSelectedText();
             if (selectedText && ttssupport) {
-                if (tts.isreading)
-                    tts.playstop();
-                window.speechSynthesis.cancel();
-                setTimeout(function(){
-                    tts.speak(selectedText);
-                },500);
-                
+                if (tts.isreading){
+                    if (!tts.ispause)
+                        tts.pause();
+                    window.speechSynthesis.cancel();
+                    setTimeout(function(){
+                        tts.speak(selectedText);
+                        
+                    },500);
+                }
             }//},100);
     }
 
@@ -528,3 +590,4 @@ $(document).ready(function(){
 
     document.body.appendChild(button[0]);
 });
+
